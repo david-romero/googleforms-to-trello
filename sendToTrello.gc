@@ -1,0 +1,27 @@
+function onFormSubmit(e) {  
+  var userEmail = Session.getEffectiveUser().getEmail();
+  var trelloCard = {};
+  trelloCard["email"] = "SVQJUG-Events@boards.trello.com";
+  trelloCard["submiter"] = userEmail;
+  var itemResponses = e.response.getItemResponses();
+      for (var i=0; i<itemResponses.length; i++) {
+        var response = itemResponses[i].getResponse();
+        Logger.log("RESPONSE => " + response);
+        var title = itemResponses[i].getItem().getTitle();
+        Logger.log("title => " + title);
+        if (title == "Event title"){
+          trelloCard["title"] = response;
+        } else if (title == "Event description" ){
+          trelloCard["description"] = response;
+        } else if (title == "Date"){
+          trelloCard["date"] = response;
+        } else if (title == "Time"){
+          trelloCard["time"] = response;
+        } else if (title == "Event location"){
+          trelloCard["location"] = response;
+        }
+      }
+  
+  var message = 'User @' + trelloCard.submiter + " wants to organize a new event titled " + trelloCard.title + ".\n The selected date is " + trelloCard.date + " - " + trelloCard.time + " \n"  + trelloCard.description;
+  MailApp.sendEmail(trelloCard.email, trelloCard.title + " #proposal",message);
+}
